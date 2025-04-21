@@ -7,8 +7,14 @@ import './index.css';
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Failed to find the root element');
 
-createRoot(rootElement).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+// Wrap the initialization in a try-catch block to capture any errors
+try {
+  createRoot(rootElement).render(
+    <StrictMode>
+      <App />
+    </StrictMode>
+  );
+  console.log("React app successfully mounted");
+} catch (error) {
+  console.error("Failed to render React app:", error);
+}

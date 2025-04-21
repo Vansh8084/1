@@ -12,7 +12,15 @@ import Dashboard from "@/components/views/Dashboard";
 import Investment from "@/components/views/Investment";
 import Tasks from "@/components/views/Tasks";
 
-const queryClient = new QueryClient();
+// Create a new query client with retry configuration
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

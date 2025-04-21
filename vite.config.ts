@@ -6,7 +6,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "./", // Add this line to make relative paths work in production
+  base: "/", // Use root-relative paths for production
   server: {
     host: "::",
     port: 8080,
@@ -21,4 +21,7 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    sourcemap: true, // Enable source maps for easier debugging
+  }
 }));
