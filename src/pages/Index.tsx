@@ -1,7 +1,6 @@
-import MainLayout from "@/components/layout/MainLayout";
 
 const Index = () => {
-  return <MainLayout />;
+  return null; // This is no longer needed since MainLayout is directly used in App.tsx
 };
 
 export default Index;

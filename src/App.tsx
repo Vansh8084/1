@@ -4,7 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Explore from "@/components/views/Explore";
 import ProjectDetail from "@/components/views/ProjectDetail";
@@ -23,7 +22,6 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<MainLayout />}>
-            {/* Render dashboard directly here, same for other tabs */}
             <Route index element={<Dashboard />} />
             <Route path="investment" element={<Investment />} />
             <Route path="tasks" element={<Tasks />} />

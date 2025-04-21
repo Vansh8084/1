@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { LayoutGrid, Wallet, ListTodo, ArrowLeft, Plus } from "lucide-react";
 
@@ -25,7 +25,8 @@ const MainLayout = () => {
     <div className="flex flex-col h-screen overflow-hidden bg-gray-50">
       <main className="flex-1 overflow-y-auto pb-16 px-4 pt-4">
         <div className="max-w-lg mx-auto">
-          {/* Main content is routed; nothing rendered directly here */}
+          {/* This is where the route content is rendered */}
+          <Outlet />
         </div>
       </main>
       <div className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 flex justify-around items-center shadow-lg z-10">
