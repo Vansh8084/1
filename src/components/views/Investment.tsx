@@ -266,49 +266,63 @@ const Investment = () => {
           </div>
         ) : (
           <div className="space-y-3">
-            {history.map((item: any) => (
-              <div key={item.id} 
-                className={`p-3 rounded-lg border flex items-center justify-between ${
-                  item.type === 'investment' 
-                    ? 'border-crypto-blue/20 bg-crypto-blue/5' 
-                    : 'border-crypto-green/20 bg-crypto-green/5'
-                }`}
-              >
-                <div className="flex items-center">
-                  {item.projectId && getProjectLogo(item.projectId) && (
-                    <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden mr-3">
-                      <img 
-                        src={getProjectLogo(item.projectId)} 
-                        alt={getProjectName(item.projectId)} 
-                        className="h-full w-full object-cover" 
-                      />
-                    </div>
-                  )}
-                  <div>
-                    <div className="flex items-center">
+            {history.map((item: any) => {
+              const [isExpanded, setIsExpanded] = useState(false);
+              
+              return (
+                <div key={item.id} className="space-y-2">
+                  <div
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                      item.type === 'investment' 
+                        ? 'border-crypto-blue/20 bg-crypto-blue/5' 
+                        : 'border-crypto-green/20 bg-crypto-green/5'
+                    } ${isExpanded ? 'rounded-b-none' : ''}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        {item.projectId && getProjectLogo(item.projectId) && (
+                          <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden mr-3">
+                            <img 
+                              src={getProjectLogo(item.projectId)} 
+                              alt={getProjectName(item.projectId)} 
+                              className="h-full w-full object-cover" 
+                            />
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-sm text-gray-600">{item.description}</p>
+                          {item.projectId && (
+                            <p className="text-xs text-gray-500">{getProjectName(item.projectId)}</p>
+                          )}
+                          <p className="text-xs text-gray-400">
+                            {new Date(item.date).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
                       <span className={`font-medium ${
                         item.type === 'investment' ? 'text-crypto-blue' : 'text-crypto-green'
                       }`}>
                         {item.type === 'investment' ? '-' : '+'} ${item.amount.toFixed(2)}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">{item.description}</p>
-                    {item.projectId && (
-                      <p className="text-xs text-gray-500">{getProjectName(item.projectId)}</p>
-                    )}
-                    <p className="text-xs text-gray-400">
-                      {new Date(item.date).toLocaleDateString()}
-                    </p>
                   </div>
+                  {isExpanded && (
+                    <div className="p-2 rounded-b-lg border-x border-b border-gray-200 bg-gray-50 flex justify-end">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          confirmDeleteTransaction(item.id, item.type);
+                        }}
+                        className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <button 
-                  onClick={() => confirmDeleteTransaction(item.id, item.type)}
-                  className="text-gray-400 hover:text-red-500"
-                >
-                  <Trash2 size={18} />
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>
