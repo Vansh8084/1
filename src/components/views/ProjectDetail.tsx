@@ -2,10 +2,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { projectList } from "./Explore";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 
-// Add your logic for adding to favorites, my projects, etc., here
-// For demo: uses only UI, you'll want to hook this up to localStorage/tasks logic
 const ProjectDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -28,68 +27,94 @@ const ProjectDetail = () => {
       <Button
         onClick={() => navigate("/explore")}
         variant="ghost"
-        className="mb-4 flex items-center"
+        className="mb-6 flex items-center"
       >
         <ArrowLeft size={18} className="mr-2" />
         Back
       </Button>
 
-      <div className="rounded-2xl shadow-lg bg-white/90 border border-gray-100 p-6 text-center">
-        <div className="w-24 h-24 mb-3 mx-auto rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-          <img src={project.logo} alt={project.name} className="w-full h-full object-cover" />
+      <div className="rounded-2xl shadow-lg bg-white/90 border border-gray-100">
+        {/* Hero Section */}
+        <div className="p-8 text-center border-b border-gray-100 bg-gradient-to-br from-gray-50 to-white">
+          <div className="w-24 h-24 mb-4 mx-auto rounded-full bg-gradient-to-br from-purple-500/5 to-blue-500/5 flex items-center justify-center overflow-hidden ring-4 ring-white">
+            <img src={project.logo} alt={project.name} className="w-full h-full object-cover" />
+          </div>
+          <h2 className="text-2xl font-bold mb-2">{project.name}</h2>
+          <Badge variant="secondary" className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 text-primary">
+            {project.status}
+          </Badge>
+          <p className="text-sm text-gray-500 mt-4 max-w-md mx-auto">{project.description}</p>
         </div>
-        <h2 className="text-2xl font-bold mb-2">{project.name}</h2>
-        <div className="text-sm text-gray-500 mb-3">{project.description}</div>
 
-        <div className="grid grid-cols-2 gap-3 text-left mb-4">
-          <div>
-            <span className="block font-medium text-gray-700">TGE</span>
-            <span className="block text-gray-600">{project.tge}</span>
+        {/* Project Details */}
+        <div className="p-6">
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            {/* TGE Info */}
+            <div className="bg-gradient-to-br from-purple-500/5 to-blue-500/5 p-4 rounded-xl">
+              <span className="block font-medium text-gray-700 mb-1">TGE</span>
+              <span className="text-lg text-primary">{project.tge}</span>
+            </div>
+            
+            {/* Funding Info */}
+            <div className="bg-gradient-to-br from-green-500/5 to-teal-500/5 p-4 rounded-xl">
+              <span className="block font-medium text-gray-700 mb-1">Funding</span>
+              <span className="text-lg text-primary">{project.funding}</span>
+            </div>
+            
+            {/* Reward Info */}
+            <div className="bg-gradient-to-br from-orange-500/5 to-yellow-500/5 p-4 rounded-xl">
+              <span className="block font-medium text-gray-700 mb-1">Reward</span>
+              <span className="text-lg text-primary">{project.reward}</span>
+            </div>
+            
+            {/* Type Info */}
+            <div className="bg-gradient-to-br from-pink-500/5 to-rose-500/5 p-4 rounded-xl">
+              <span className="block font-medium text-gray-700 mb-1">Type</span>
+              <span className="text-lg text-primary">{project.type}</span>
+            </div>
           </div>
-          <div>
-            <span className="block font-medium text-gray-700">Funding</span>
-            <span className="block text-gray-600">{project.funding}</span>
+
+          {/* Social Links */}
+          <div className="flex justify-center gap-4 mb-6">
+            <a
+              href={project.social.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors"
+            >
+              <ExternalLink size={16} />
+              Website
+            </a>
+            <a
+              href={project.social.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors"
+            >
+              <ExternalLink size={16} />
+              Twitter
+            </a>
           </div>
-          <div>
-            <span className="block font-medium text-gray-700">Reward</span>
-            <span className="block text-gray-600">{project.reward}</span>
-          </div>
-          <div>
-            <span className="block font-medium text-gray-700">Type</span>
-            <span className="block text-gray-600">{project.type}</span>
-          </div>
-        </div>
-        <div className="flex justify-center gap-4 mb-5">
-          <a
-            href={project.social.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary hover:underline text-sm"
-          >
-            Website
-          </a>
-          <a
-            href={project.social.twitter}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary hover:underline text-sm"
-          >
-            Twitter
-          </a>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Button variant="secondary">Add to Favorite</Button>
-          <Button variant="default">Add to My Projects</Button>
-          <a
-            href={project.social.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block"
-          >
-            <Button variant="outline" className="w-full">
-              Join
+
+          {/* Action Buttons */}
+          <div className="flex flex-col gap-3 px-4">
+            <Button variant="secondary" className="w-full">
+              Add to Favorite
             </Button>
-          </a>
+            <Button variant="default" className="w-full">
+              Add to My Projects
+            </Button>
+            <a
+              href={project.social.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block"
+            >
+              <Button variant="outline" className="w-full">
+                Join Project <ExternalLink size={16} className="ml-2" />
+              </Button>
+            </a>
+          </div>
         </div>
       </div>
     </div>
