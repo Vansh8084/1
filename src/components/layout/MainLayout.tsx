@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Wallet, ListTodo, Plus, Moon, Sun } from "lucide-react";
+import { LayoutGrid, Wallet, ListTodo, Compass, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
@@ -10,7 +10,7 @@ const TABS = [
   { key: "dashboard", icon: LayoutGrid, route: "/" },
   { key: "investment", icon: Wallet, route: "/investment" },
   { key: "tasks", icon: ListTodo, route: "/tasks" },
-  { key: "explore", icon: Plus, route: "/explore" },
+  { key: "explore", icon: Compass, route: "/explore" },
 ];
 
 const MainLayout = () => {
@@ -34,18 +34,22 @@ const MainLayout = () => {
     <div className="flex flex-col h-screen overflow-hidden bg-gray-50 dark:bg-gray-950 transition-colors duration-200">
       <main className="flex-1 overflow-y-auto pb-16 px-4 pt-4">
         <div className="max-w-lg mx-auto">
-          {/* Theme toggle button */}
-          <div className="flex justify-end mb-4">
+          {/* Header with theme toggle */}
+          <div className="bg-white dark:bg-gray-900/60 backdrop-blur-sm rounded-xl p-4 mb-6 shadow-sm border border-gray-100 dark:border-gray-800 flex justify-between items-center">
+            <div>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">Crypto Airdrops</h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Track & earn rewards</p>
+            </div>
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="rounded-full"
+              className="rounded-full bg-gray-100 dark:bg-gray-800 border-none hover:bg-gray-200 dark:hover:bg-gray-700"
             >
               {theme === "dark" ? (
-                <Sun className="h-5 w-5" />
+                <Sun className="h-5 w-5 text-yellow-500" />
               ) : (
-                <Moon className="h-5 w-5" />
+                <Moon className="h-5 w-5 text-gray-700" />
               )}
               <span className="sr-only">Toggle theme</span>
             </Button>
@@ -62,7 +66,7 @@ const MainLayout = () => {
               onClick={() => navigate(tab.route)}
               className={cn(
                 "nav-icon",
-                activeTab === tab.key && "nav-icon-active"
+                activeTab === tab.key ? "nav-icon-active dark:text-blue-400" : "dark:text-gray-500"
               )}
               aria-label={tab.key.charAt(0).toUpperCase() + tab.key.slice(1)}
             >

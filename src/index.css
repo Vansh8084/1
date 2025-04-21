@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -61,15 +62,15 @@
 /* Custom utility classes for the project */
 @layer components {
   .nav-icon {
-    @apply flex items-center justify-center h-12 w-12 rounded-full text-gray-500 dark:text-gray-400 transition-colors;
+    @apply flex items-center justify-center h-12 w-12 rounded-full text-gray-500 dark:text-gray-400 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800;
   }
   
   .nav-icon-active {
-    @apply text-blue-600 dark:text-blue-400;
+    @apply text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20;
   }
   
   .stats-card {
-    @apply rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 dark:bg-gray-900/50;
+    @apply rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 dark:bg-gray-900/50 transition-all duration-200 hover:shadow-md;
   }
   
   .bg-gradient-blue {
@@ -81,7 +82,7 @@
   }
   
   .project-card {
-    @apply flex items-center p-4 mb-3 bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-200;
+    @apply flex items-center p-4 mb-3 bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-200 hover:shadow-md dark:hover:bg-gray-900/70;
   }
   
   .progress-bar {
