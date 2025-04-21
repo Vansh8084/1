@@ -1,7 +1,9 @@
 
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, ArrowUpRight } from "lucide-react";
+import { Compass, ArrowUpRight, ExternalLink, Calendar, Twitter } from "lucide-react";
+import { toast } from "@/components/ui/sonner";
+import { saveProject, getProjects } from "@/utils/localStorage";
 
 // PROJECTS DATA: EDIT THIS ARRAY TO ADD/REMOVE PROJECTS
 export const projectList = [
@@ -39,15 +41,36 @@ export const projectList = [
 
 const Explore = () => {
   const navigate = useNavigate();
+  
+  const addToMyProjects = (e, project) => {
+    e.stopPropagation();
+    
+    const projectToSave = {
+      id: project.id,
+      name: project.name,
+      logo: project.logo,
+      joined: true,
+      completed: false,
+      createdAt: Date.now()
+    };
+    
+    saveProject(projectToSave);
+    toast.success("Project added to your projects", {
+      description: `${project.name} has been added to your projects.`
+    });
+  };
+  
   return (
     <div className="pt-3">
-      <h2 className="text-xl font-bold mb-6 text-center">Explore Projects</h2>
+      <h2 className="text-xl font-bold mb-6 text-center">
+        <Compass className="inline-block mr-2" /> Explore Projects
+      </h2>
       <div className="grid gap-6">
         {projectList.map((p) => (
           <button
             key={p.id}
             onClick={() => navigate(`/explore/${p.id}`)}
-            className="group rounded-2xl bg-white shadow-md border border-gray-100 p-6 flex flex-col items-center relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] animate-fade-in"
+            className="group rounded-2xl bg-white shadow-md border border-gray-100 p-6 flex items-start relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.01] animate-fade-in text-left"
           >
             {/* Project Status Badge */}
             <Badge 
@@ -58,26 +81,57 @@ const Explore = () => {
             </Badge>
 
             {/* Logo */}
-            <div className="w-20 h-20 bg-gradient-to-br from-gray-50 to-gray-100 rounded-full mb-4 flex items-center justify-center overflow-hidden ring-2 ring-gray-50">
+            <div className="w-20 h-20 bg-gradient-to-br from-gray-50 to-gray-100 rounded-full mb-4 flex-shrink-0 flex items-center justify-center overflow-hidden ring-2 ring-gray-50 mr-5">
               <img src={p.logo} alt={p.name} className="w-full h-full object-cover" />
             </div>
 
             {/* Project Info */}
-            <div className="text-center">
-              <h3 className="font-semibold text-lg text-gray-800 mb-2 flex items-center justify-center gap-2">
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg text-gray-800 mb-1 flex items-center gap-2">
                 {p.name}
                 <ArrowUpRight className="w-4 h-4 opacity-0 -translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0" />
               </h3>
               <p className="text-sm text-gray-500 mb-3">{p.description}</p>
 
               {/* Quick Info */}
-              <div className="flex items-center justify-center gap-3 text-xs text-gray-400">
-                <span className="flex items-center gap-1">
+              <div className="flex items-center text-xs text-gray-400 mb-2">
+                <span className="flex items-center gap-1 mr-4">
                   <Calendar className="w-3 h-3" />
                   {p.tge}
                 </span>
-                <span>•</span>
-                <span>{p.type}</span>
+                <span className="mr-4">{p.type}</span>
+                <span>{p.reward}</span>
+              </div>
+              
+              {/* Social Links & Action */}
+              <div className="flex justify-between items-center mt-3">
+                <div className="flex items-center gap-3">
+                  <a
+                    href={p.social.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-gray-400 hover:text-primary transition-colors"
+                  >
+                    <ExternalLink size={14} />
+                  </a>
+                  <a
+                    href={p.social.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-gray-400 hover:text-primary transition-colors"
+                  >
+                    <Twitter size={14} />
+                  </a>
+                </div>
+                
+                <button
+                  onClick={(e) => addToMyProjects(e, p)}
+                  className="text-xs text-gray-500 border border-gray-200 rounded-full px-3 py-1 hover:bg-gray-50"
+                >
+                  Add to My Projects
+                </button>
               </div>
             </div>
           </button>

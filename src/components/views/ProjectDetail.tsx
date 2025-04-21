@@ -3,7 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { projectList } from "./Explore";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, Twitter } from "lucide-react";
+import { toast } from "@/components/ui/sonner";
+import { saveProject, getProjects } from "@/utils/localStorage";
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -21,6 +23,22 @@ const ProjectDetail = () => {
       </div>
     );
   }
+  
+  const addToMyProjects = () => {
+    const projectToSave = {
+      id: project.id,
+      name: project.name,
+      logo: project.logo,
+      joined: true,
+      completed: false,
+      createdAt: Date.now()
+    };
+    
+    saveProject(projectToSave);
+    toast.success("Project added successfully", {
+      description: `${project.name} has been added to your projects.`
+    });
+  };
 
   return (
     <div className="animate-fade-in pb-8">
@@ -44,6 +62,28 @@ const ProjectDetail = () => {
             {project.status}
           </Badge>
           <p className="text-sm text-gray-500 mt-4 max-w-md mx-auto">{project.description}</p>
+          
+          {/* Social Links */}
+          <div className="flex justify-center gap-5 mt-6">
+            <a
+              href={project.social.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors"
+            >
+              <ExternalLink size={18} />
+              Website
+            </a>
+            <a
+              href={project.social.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors"
+            >
+              <Twitter size={18} />
+              Twitter
+            </a>
+          </div>
         </div>
 
         {/* Project Details */}
@@ -74,34 +114,21 @@ const ProjectDetail = () => {
             </div>
           </div>
 
-          {/* Social Links */}
-          <div className="flex justify-center gap-4 mb-6">
-            <a
-              href={project.social.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors"
-            >
-              <ExternalLink size={16} />
-              Website
-            </a>
-            <a
-              href={project.social.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors"
-            >
-              <ExternalLink size={16} />
-              Twitter
-            </a>
+          {/* Extended Project Description */}
+          <div className="mb-8 bg-gray-50 p-4 rounded-xl">
+            <h3 className="font-medium text-gray-700 mb-2">About {project.name}</h3>
+            <p className="text-sm text-gray-600">
+              {project.description} Learn more about how {project.name} is revolutionizing the blockchain ecosystem with its innovative approach to scaling and security.
+            </p>
           </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col gap-3 px-4">
-            <Button variant="secondary" className="w-full">
-              Add to Favorite
-            </Button>
-            <Button variant="default" className="w-full">
+            <Button 
+              variant="secondary" 
+              className="w-full"
+              onClick={addToMyProjects}
+            >
               Add to My Projects
             </Button>
             <a

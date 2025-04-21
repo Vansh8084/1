@@ -8,14 +8,19 @@ import {
   deleteInvestment, 
   deleteEarning,
   getFinancialSummary,
+  getProjects,
   Transaction,
   FinancialSummary,
+  Project,
   generateId
 } from "@/utils/localStorage";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2 } from "lucide-react";
+import { toast } from "@/components/ui/sonner";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Investment = () => {
   const [financial, setFinancial] = useState<FinancialSummary>({
@@ -27,12 +32,18 @@ const Investment = () => {
   const [investments, setInvestments] = useState<Transaction[]>([]);
   const [earnings, setEarnings] = useState<Transaction[]>([]);
   const [history, setHistory] = useState<Transaction[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   
   // Form states
   const [isAddInvestmentOpen, setIsAddInvestmentOpen] = useState(false);
   const [isAddEarningOpen, setIsAddEarningOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+  const [selectedProject, setSelectedProject] = useState<string>("");
+  const [customProjectName, setCustomProjectName] = useState("");
+  const [customProjectLogo, setCustomProjectLogo] = useState("");
+  const [itemToDelete, setItemToDelete] = useState<{id: string, type: 'investment' | 'earning'} | null>(null);
 
   useEffect(() => {
     loadData();
@@ -49,6 +60,9 @@ const Investment = () => {
     setInvestments(invs);
     setEarnings(earns);
     
+    // Load projects
+    setProjects(getProjects());
+    
     // Combine and sort history
     const combined = [
       ...invs.map(inv => ({ ...inv, type: 'investment' })),
@@ -63,16 +77,47 @@ const Investment = () => {
   const handleAddInvestment = () => {
     if (!amount || parseFloat(amount) <= 0) return;
     
+    let projectInfo = null;
+    
+    // Check if we need to create a custom project
+    if (selectedProject === "custom" && customProjectName) {
+      const newProject = {
+        id: generateId(),
+        name: customProjectName.trim(),
+        logo: customProjectLogo || "",
+        joined: true,
+        completed: false,
+        createdAt: Date.now()
+      };
+      
+      projectInfo = newProject;
+    }
+    
     const newInvestment: Transaction = {
       id: generateId(),
       amount: parseFloat(amount),
       description: description || "Investment",
-      date: Date.now()
+      date: Date.now(),
+      projectId: selectedProject === "custom" ? projectInfo?.id : (selectedProject || undefined)
     };
     
+    // If custom project, save it first
+    if (projectInfo) {
+      import("@/utils/localStorage").then(module => {
+        module.saveProject(projectInfo);
+      });
+    }
+    
     saveInvestment(newInvestment);
+    toast.success("Investment added", {
+      description: `$${parseFloat(amount).toFixed(2)} investment has been recorded.`
+    });
+    
     setAmount("");
     setDescription("");
+    setSelectedProject("");
+    setCustomProjectName("");
+    setCustomProjectLogo("");
     setIsAddInvestmentOpen(false);
     loadData();
   };
@@ -80,27 +125,90 @@ const Investment = () => {
   const handleAddEarning = () => {
     if (!amount || parseFloat(amount) <= 0) return;
     
+    let projectInfo = null;
+    
+    // Check if we need to create a custom project
+    if (selectedProject === "custom" && customProjectName) {
+      const newProject = {
+        id: generateId(),
+        name: customProjectName.trim(),
+        logo: customProjectLogo || "",
+        joined: true,
+        completed: false,
+        createdAt: Date.now()
+      };
+      
+      projectInfo = newProject;
+    }
+    
     const newEarning: Transaction = {
       id: generateId(),
       amount: parseFloat(amount),
       description: description || "Earning",
-      date: Date.now()
+      date: Date.now(),
+      projectId: selectedProject === "custom" ? projectInfo?.id : (selectedProject || undefined)
     };
     
+    // If custom project, save it first
+    if (projectInfo) {
+      import("@/utils/localStorage").then(module => {
+        module.saveProject(projectInfo);
+      });
+    }
+    
     saveEarning(newEarning);
+    toast.success("Earning added", {
+      description: `$${parseFloat(amount).toFixed(2)} earning has been recorded.`
+    });
+    
     setAmount("");
     setDescription("");
+    setSelectedProject("");
+    setCustomProjectName("");
+    setCustomProjectLogo("");
     setIsAddEarningOpen(false);
     loadData();
   };
 
-  const handleDeleteTransaction = (id: string, type: 'investment' | 'earning') => {
+  const confirmDeleteTransaction = (id: string, type: 'investment' | 'earning') => {
+    setItemToDelete({ id, type });
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const handleDeleteTransaction = () => {
+    if (!itemToDelete) return;
+    
+    const { id, type } = itemToDelete;
+    
     if (type === 'investment') {
       deleteInvestment(id);
+      toast.success("Investment deleted", {
+        description: "The investment has been successfully removed."
+      });
     } else {
       deleteEarning(id);
+      toast.success("Earning deleted", {
+        description: "The earning has been successfully removed."
+      });
     }
+    
+    setIsDeleteConfirmOpen(false);
+    setItemToDelete(null);
     loadData();
+  };
+
+  // Find project name by ID
+  const getProjectName = (projectId?: string) => {
+    if (!projectId) return "";
+    const project = projects.find(p => p.id === projectId);
+    return project ? project.name : "";
+  };
+  
+  // Find project logo by ID
+  const getProjectLogo = (projectId?: string) => {
+    if (!projectId) return "";
+    const project = projects.find(p => p.id === projectId);
+    return project ? project.logo : "";
   };
 
   return (
@@ -166,21 +274,35 @@ const Investment = () => {
                     : 'border-crypto-green/20 bg-crypto-green/5'
                 }`}
               >
-                <div>
-                  <div className="flex items-center">
-                    <span className={`font-medium ${
-                      item.type === 'investment' ? 'text-crypto-blue' : 'text-crypto-green'
-                    }`}>
-                      {item.type === 'investment' ? '-' : '+'} ${item.amount.toFixed(2)}
-                    </span>
+                <div className="flex items-center">
+                  {item.projectId && getProjectLogo(item.projectId) && (
+                    <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden mr-3">
+                      <img 
+                        src={getProjectLogo(item.projectId)} 
+                        alt={getProjectName(item.projectId)} 
+                        className="h-full w-full object-cover" 
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <div className="flex items-center">
+                      <span className={`font-medium ${
+                        item.type === 'investment' ? 'text-crypto-blue' : 'text-crypto-green'
+                      }`}>
+                        {item.type === 'investment' ? '-' : '+'} ${item.amount.toFixed(2)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600">{item.description}</p>
+                    {item.projectId && (
+                      <p className="text-xs text-gray-500">{getProjectName(item.projectId)}</p>
+                    )}
+                    <p className="text-xs text-gray-400">
+                      {new Date(item.date).toLocaleDateString()}
+                    </p>
                   </div>
-                  <p className="text-sm text-gray-600">{item.description}</p>
-                  <p className="text-xs text-gray-400">
-                    {new Date(item.date).toLocaleString()}
-                  </p>
                 </div>
                 <button 
-                  onClick={() => handleDeleteTransaction(item.id, item.type)}
+                  onClick={() => confirmDeleteTransaction(item.id, item.type)}
                   className="text-gray-400 hover:text-red-500"
                 >
                   <Trash2 size={18} />
@@ -209,6 +331,42 @@ const Investment = () => {
                 onChange={(e) => setAmount(e.target.value)}
               />
             </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Project</label>
+              <select 
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                value={selectedProject}
+                onChange={(e) => setSelectedProject(e.target.value)}
+              >
+                <option value="">Select project</option>
+                {projects.map(project => (
+                  <option key={project.id} value={project.id}>{project.name}</option>
+                ))}
+                <option value="custom">Add new project</option>
+              </select>
+            </div>
+            
+            {selectedProject === "custom" && (
+              <div className="space-y-4 border-t border-gray-100 pt-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Project Name</label>
+                  <Input
+                    placeholder="Project name"
+                    value={customProjectName}
+                    onChange={(e) => setCustomProjectName(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Logo URL (optional)</label>
+                  <Input
+                    placeholder="https://..."
+                    value={customProjectLogo}
+                    onChange={(e) => setCustomProjectLogo(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+            
             <div className="space-y-2">
               <label className="text-sm font-medium">Description</label>
               <Input
@@ -248,6 +406,42 @@ const Investment = () => {
               />
             </div>
             <div className="space-y-2">
+              <label className="text-sm font-medium">Project</label>
+              <select 
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                value={selectedProject}
+                onChange={(e) => setSelectedProject(e.target.value)}
+              >
+                <option value="">Select project</option>
+                {projects.map(project => (
+                  <option key={project.id} value={project.id}>{project.name}</option>
+                ))}
+                <option value="custom">Add new project</option>
+              </select>
+            </div>
+            
+            {selectedProject === "custom" && (
+              <div className="space-y-4 border-t border-gray-100 pt-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Project Name</label>
+                  <Input
+                    placeholder="Project name"
+                    value={customProjectName}
+                    onChange={(e) => setCustomProjectName(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Logo URL (optional)</label>
+                  <Input
+                    placeholder="https://..."
+                    value={customProjectLogo}
+                    onChange={(e) => setCustomProjectLogo(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+            
+            <div className="space-y-2">
               <label className="text-sm font-medium">Description</label>
               <Input
                 placeholder="Airdrop reward..."
@@ -262,6 +456,26 @@ const Investment = () => {
             </Button>
             <Button onClick={handleAddEarning}>
               Add
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this {itemToDelete?.type}? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteConfirmOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteTransaction}>
+              Delete
             </Button>
           </DialogFooter>
         </DialogContent>
