@@ -23,5 +23,12 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     sourcemap: true, // Enable source maps for easier debugging
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Skip certain warnings
+        if (warning.code === 'THIS_IS_UNDEFINED') return;
+        warn(warning);
+      }
+    }
   }
 }));
