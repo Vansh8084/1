@@ -27,4 +27,14 @@ try {
   console.log("React app successfully mounted");
 } catch (error) {
   console.error("Failed to render React app:", error);
+  // Display error to user
+  if (rootElement) {
+    rootElement.innerHTML = `
+      <div style="color: red; margin: 20px; font-family: sans-serif;">
+        <h2>Application Error</h2>
+        <p>Sorry, the application failed to load. Please try refreshing the page.</p>
+        <pre>${error instanceof Error ? error.message : String(error)}</pre>
+      </div>
+    `;
+  }
 }
