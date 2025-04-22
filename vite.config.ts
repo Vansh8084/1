@@ -6,7 +6,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "./", // Use relative paths for GitHub Pages
+  base: "./", // Ensure using relative paths for GitHub Pages
   server: {
     host: "::",
     port: 8080,
@@ -23,6 +23,8 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     sourcemap: true, // Enable source maps for easier debugging
+    outDir: "dist", // Explicitly set output directory
+    assetsDir: "assets", // Explicitly set assets directory
     rollupOptions: {
       onwarn(warning, warn) {
         // Skip certain warnings
