@@ -22,13 +22,12 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    sourcemap: true, // Enable source maps for easier debugging
-    outDir: "dist", // Explicitly set output directory
-    assetsDir: "assets", // Explicitly set assets directory
-    minify: 'terser', // Use terser for better minification
+    sourcemap: true, 
+    outDir: "dist", 
+    assetsDir: "assets", 
+    minify: 'terser',
     rollupOptions: {
       onwarn(warning, warn) {
-        // Skip certain warnings
         if (warning.code === 'THIS_IS_UNDEFINED') return;
         warn(warning);
       },
