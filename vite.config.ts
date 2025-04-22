@@ -26,6 +26,12 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist", 
     assetsDir: "assets", 
     minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: false,
+        pure_funcs: [],
+      },
+    },
     rollupOptions: {
       onwarn(warning, warn) {
         if (warning.code === 'THIS_IS_UNDEFINED') return;
