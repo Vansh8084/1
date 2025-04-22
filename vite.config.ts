@@ -25,12 +25,18 @@ export default defineConfig(({ mode }) => ({
     sourcemap: true, // Enable source maps for easier debugging
     outDir: "dist", // Explicitly set output directory
     assetsDir: "assets", // Explicitly set assets directory
+    minify: 'terser', // Use terser for better minification
     rollupOptions: {
       onwarn(warning, warn) {
         // Skip certain warnings
         if (warning.code === 'THIS_IS_UNDEFINED') return;
         warn(warning);
-      }
+      },
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
     }
   }
 }));
