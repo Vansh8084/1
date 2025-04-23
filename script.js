@@ -39,7 +39,7 @@ function initializeLocalStorage() {
                 id: 'blockmesh',
                 name: 'Blockmesh',
                 description: 'Decentralized mesh network protocol',
-                logo: 'https://picsum.photos/200/200?random=1',
+                logo: 'https://img.cryptorank.io/coins/block_mesh_network1730469812584.png',
                 tags: ['testnet', 'defi'],
                 tge: 'Q3 2023',
                 funding: '$12M',
