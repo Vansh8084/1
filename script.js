@@ -412,6 +412,24 @@ function initializeLocalStorage() {
                     { name: 'Discord', url: '#' }
                 ],
                 isHot: false
+            },
+            {
+                id: 'momentum',
+                name: 'Momentum',
+                description: 'Decentralized Exhchange for perpertual trading,
+                logo: 'https://img.cryptorank.io/coins/block_mesh_network1730469812584.png',
+                tags: ['testnet', 'defi'],
+                tge: 'Q4 2023',
+                funding: '$19M',
+                reward: 'POTENTIAL🤔',
+                type: 'Layer 1',
+                fullDescription: 'Blockmesh is a decentralized mesh network protocol that enables secure and scalable communication between devices without relying on traditional internet infrastructure.',
+                socialLinks: [
+                    { name: 'Website', url: 'https"//xhamster19.com' },
+                    { name: 'Twitter', url: '#' },
+                    { name: 'Discord', url: '#' }
+                ],
+                isHot: true
             }
         ];
         
